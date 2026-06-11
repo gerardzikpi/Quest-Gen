@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}QuestGen - {{ topic.name }} Results{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-10">
+    <!-- Results Header / Score Summary Card -->
+    <div class="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl p-8 md:p-10 shadow-2xl relative overflow-hidden text-center space-y-6">
+        <!-- Glow accents -->
+        <div class="absolute top-[-20%] left-[-10%] w-40 h-40 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-40 h-40 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
+
+        <span class="text-xs text-indigo-400 font-bold uppercase tracking-widest bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20">
+            Quest Completed
+        </span>
+
+        <h1 class="text-3xl font-extrabold text-slate-100">
+            {{ topic.name }}
+        </h1>
+
+        <!-- Radial Progress Circle -->
+        <div class="relative w-36 h-36 mx-auto flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <!-- Background circle -->
+                <circle class="stroke-white/[0.04]" stroke-width="8" fill="transparent" r="40" cx="50" cy="50"/>
+                <!-- Active circle -->
+                <circle class="{{ ring_color }} transition-all duration-1000 ease-out" 
+                        stroke-width="8" 
+                        stroke-dasharray="251.2" 
+                        stroke-dashoffset="{{ dash_offset }}" 
+                        stroke-linecap="round" 
+                        fill="transparent" 
+                        r="40" 
+                        cx="50" 
+                        cy="50"/>
+            </svg>
+            <div class="absolute text-center space-y-0.5">
+                <span class="block text-3xl font-black text-white leading-none">
+                    {{ percentage }}%
+                </span>
+                <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                    Score
+                </span>
+            </div>
+        </div>
+
+        <div class="space-y-2 max-w-md mx-auto">
+            <p class="text-xl font-bold {{ status_color }}">
+                {{ status_message }}
+            </p>
+            <p class="text-sm text-slate-400">
+                You correctly answered <span class="text-slate-200 font-semibold">{{ score }}</span> out of <span class="text-slate-200 font-semibold">{{ total }}</span> questions.
+            </p>
+        </div>
+
+        <!-- Action Links -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <form action="{% url 'quiz_start' topic.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold tracking-wide shadow-lg shadow-indigo-500/25 transition-all duration-300 transform active:scale-95 cursor-pointer flex items-center gap-2 group">
+                    <i class="fa-solid fa-arrow-rotate-right group-hover:rotate-45 transition-transform"></i>
+                    Try Quest Again
+                </button>
+            </form>
+            <a href="{% url 'home' %}" class="px-8 py-3.5 rounded-2xl border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.04] text-slate-300 hover:text-white font-bold tracking-wide transition-all duration-200 cursor-pointer flex items-center gap-2">
+                <i class="fa-solid fa-house"></i>
+                Back to Topics
+            </a>
+        </div>
+    </div>
+
+    <!-- Detailed Question Breakdown -->
+    <div class="space-y-6">
+        <h2 class="text-xl font-bold text-slate-200 tracking-wide flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-indigo-400"></i>
+            Question Review
+        </h2>
+
+        <div class="space-y-4">
+            {% for item in breakdown %}
+                <div class="rounded-3xl border border-white/[0.04] bg-white/[0.01] p-6 space-y-4 relative overflow-hidden">
+                    <!-- Right/Wrong indicator border and banner -->
+                    {% if item.is_correct %}
+                        <div class="absolute left-0 top-0 h-full w-[4px] bg-emerald-500"></div>
+                    {% else %}
+                        <div class="absolute left-0 top-0 h-full w-[4px] bg-rose-500"></div>
+                    {% endif %}
+
+                    <!-- Header: Question number & Status icon -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            Question {{ item.number }}
+                        </span>
+                        {% if item.is_correct %}
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                                <i class="fa-solid fa-circle-check"></i> Correct
+                            </span>
+                        {% else %}
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20">
+                                <i class="fa-solid fa-circle-xmark"></i> Incorrect
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Question Text -->
+                    <p class="text-base font-bold text-slate-200">
+                        {{ item.question.question }}
+                    </p>
+
+                    <!-- Answer Options comparison -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                        <!-- Option A -->
+                        <div class="p-3.5 rounded-xl text-sm border 
+                            {% if item.correct_option_key == 'option_a' %}
+                                border-emerald-500/30 bg-emerald-500/5 text-emerald-300
+                            {% elif item.selected_option == 'option_a' %}
+                                border-rose-500/30 bg-rose-500/5 text-rose-300
+                            {% else %}
+                                border-white/[0.03] bg-white/[0.003] text-slate-400 opacity-60
+                            {% endif %}">
+                            <span class="font-bold text-xs uppercase tracking-wide opacity-50 block mb-0.5">Option A</span>
+                            <span class="font-medium">{{ item.question.option_a }}</span>
+                        </div>
+
+                        <!-- Option B -->
+                        <div class="p-3.5 rounded-xl text-sm border 
+                            {% if item.correct_option_key == 'option_b' %}
+                                border-emerald-500/30 bg-emerald-500/5 text-emerald-300
+                            {% elif item.selected_option == 'option_b' %}
+                                border-rose-500/30 bg-rose-500/5 text-rose-300
+                            {% else %}
+                                border-white/[0.03] bg-white/[0.003] text-slate-400 opacity-60
+                            {% endif %}">
+                            <span class="font-bold text-xs uppercase tracking-wide opacity-50 block mb-0.5">Option B</span>
+                            <span class="font-medium">{{ item.question.option_b }}</span>
+                        </div>
+
+                        <!-- Option C -->
+                        <div class="p-3.5 rounded-xl text-sm border 
+                            {% if item.correct_option_key == 'option_c' %}
+                                border-emerald-500/30 bg-emerald-500/5 text-emerald-300
+                            {% elif item.selected_option == 'option_c' %}
+                                border-rose-500/30 bg-rose-500/5 text-rose-300
+                            {% else %}
+                                border-white/[0.03] bg-white/[0.003] text-slate-400 opacity-60
+                            {% endif %}">
+                            <span class="font-bold text-xs uppercase tracking-wide opacity-50 block mb-0.5">Option C</span>
+                            <span class="font-medium">{{ item.question.option_c }}</span>
+                        </div>
+
+                        <!-- Option D -->
+                        <div class="p-3.5 rounded-xl text-sm border 
+                            {% if item.correct_option_key == 'option_d' %}
+                                border-emerald-500/30 bg-emerald-500/5 text-emerald-300
+                            {% elif item.selected_option == 'option_d' %}
+                                border-rose-500/30 bg-rose-500/5 text-rose-300
+                            {% else %}
+                                border-white/[0.03] bg-white/[0.003] text-slate-400 opacity-60
+                            {% endif %}">
+                            <span class="font-bold text-xs uppercase tracking-wide opacity-50 block mb-0.5">Option D</span>
+                            <span class="font-medium">{{ item.question.option_d }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

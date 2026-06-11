@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}QuestGen - Question {{ current_number }} of {{ total_questions }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Header: Progress and Status -->
+    <div class="mb-8 space-y-4">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <span>Question {{ current_number }} of {{ total_questions }}</span>
+            <span>{{ progress_percentage }}% Completed</span>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-white/[0.04] h-2 rounded-full overflow-hidden border border-white/[0.05]">
+            <div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500 ease-out" style="width: {{ progress_percentage }}%"></div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    {% if error_message %}
+        <div class="mb-6 p-4 rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-300 flex items-center gap-3 text-sm font-medium animate-pulse">
+            <i class="fa-solid fa-circle-exclamation text-rose-400"></i>
+            {{ error_message }}
+        </div>
+    {% endif %}
+
+    <!-- Question Card -->
+    <div class="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl p-6 md:p-8 shadow-2xl relative overflow-hidden space-y-8">
+        <!-- Background Glow -->
+        <div class="absolute top-0 right-0 w-32 h-32 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none"></div>
+
+        <!-- Question Title -->
+        <h2 class="text-xl md:text-2xl font-bold text-slate-100 leading-snug">
+            {{ question.question }}
+        </h2>
+
+        <!-- Form for Answering -->
+        <form method="POST" action="{% url 'quiz_question' %}" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 gap-3.5">
+                {% for key, val in question.items %}
+                    <!-- We iterate through option keys manually to ensure correct formatting and template logic -->
+                {% endfor %}
+
+                <!-- Option A -->
+                <label class="cursor-pointer block">
+                    <input type="radio" name="option" value="option_a" class="peer sr-only" 
+                           {% if show_feedback %}disabled{% endif %} 
+                           {% if selected_option == 'option_a' %}checked{% endif %}>
+                    
+                    {% if show_feedback %}
+                        <!-- Feedback Mode -->
+                        {% if correct_option_key == 'option_a' %}
+                            <!-- Correct Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-emerald-500/50 bg-emerald-500/10 text-emerald-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_a }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 px-2.5 py-1 rounded border border-emerald-500/30">Correct</span>
+                            </div>
+                        {% elif selected_option == 'option_a' %}
+                            <!-- User Selected Incorrect Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-rose-500/50 bg-rose-500/10 text-rose-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_a }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-rose-500/20 px-2.5 py-1 rounded border border-rose-500/30">Your Choice</span>
+                            </div>
+                        {% else %}
+                            <!-- Other Muted Option -->
+                            <div class="flex items-center p-5 rounded-2xl border border-white/[0.02] bg-white/[0.003] opacity-40 transition-all duration-300">
+                                <div class="w-5 h-5 rounded-full border border-slate-700 mr-4 flex items-center justify-center"></div>
+                                <span class="font-medium text-slate-400">{{ question.option_a }}</span>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Standard Selection Mode -->
+                        <div class="flex items-center p-5 rounded-2xl border border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-slate-600 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/[0.05] peer-checked:ring-2 peer-checked:ring-indigo-500/20 peer-checked:[&_.radio-circle]:border-indigo-500 peer-checked:[&_.radio-circle]:bg-indigo-500 peer-checked:[&_.radio-dot]:opacity-100 peer-checked:[&_.option-text]:text-white">
+                            <div class="radio-circle w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center mr-4 transition-all shrink-0">
+                                <div class="radio-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
+                            </div>
+                            <span class="option-text text-slate-300 font-medium transition-colors">{{ question.option_a }}</span>
+                        </div>
+                    {% endif %}
+                </label>
+
+                <!-- Option B -->
+                <label class="cursor-pointer block">
+                    <input type="radio" name="option" value="option_b" class="peer sr-only" 
+                           {% if show_feedback %}disabled{% endif %} 
+                           {% if selected_option == 'option_b' %}checked{% endif %}>
+                    
+                    {% if show_feedback %}
+                        <!-- Feedback Mode -->
+                        {% if correct_option_key == 'option_b' %}
+                            <!-- Correct Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-emerald-500/50 bg-emerald-500/10 text-emerald-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_b }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 px-2.5 py-1 rounded border border-emerald-500/30">Correct</span>
+                            </div>
+                        {% elif selected_option == 'option_b' %}
+                            <!-- User Selected Incorrect Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-rose-500/50 bg-rose-500/10 text-rose-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_b }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-rose-500/20 px-2.5 py-1 rounded border border-rose-500/30">Your Choice</span>
+                            </div>
+                        {% else %}
+                            <!-- Other Muted Option -->
+                            <div class="flex items-center p-5 rounded-2xl border border-white/[0.02] bg-white/[0.003] opacity-40 transition-all duration-300">
+                                <div class="w-5 h-5 rounded-full border border-slate-700 mr-4 flex items-center justify-center"></div>
+                                <span class="font-medium text-slate-400">{{ question.option_b }}</span>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Standard Selection Mode -->
+                        <div class="flex items-center p-5 rounded-2xl border border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-slate-600 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/[0.05] peer-checked:ring-2 peer-checked:ring-indigo-500/20 peer-checked:[&_.radio-circle]:border-indigo-500 peer-checked:[&_.radio-circle]:bg-indigo-500 peer-checked:[&_.radio-dot]:opacity-100 peer-checked:[&_.option-text]:text-white">
+                            <div class="radio-circle w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center mr-4 transition-all shrink-0">
+                                <div class="radio-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
+                            </div>
+                            <span class="option-text text-slate-300 font-medium transition-colors">{{ question.option_b }}</span>
+                        </div>
+                    {% endif %}
+                </label>
+
+                <!-- Option C -->
+                <label class="cursor-pointer block">
+                    <input type="radio" name="option" value="option_c" class="peer sr-only" 
+                           {% if show_feedback %}disabled{% endif %} 
+                           {% if selected_option == 'option_c' %}checked{% endif %}>
+                    
+                    {% if show_feedback %}
+                        <!-- Feedback Mode -->
+                        {% if correct_option_key == 'option_c' %}
+                            <!-- Correct Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-emerald-500/50 bg-emerald-500/10 text-emerald-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_c }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 px-2.5 py-1 rounded border border-emerald-500/30">Correct</span>
+                            </div>
+                        {% elif selected_option == 'option_c' %}
+                            <!-- User Selected Incorrect Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-rose-500/50 bg-rose-500/10 text-rose-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_c }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-rose-500/20 px-2.5 py-1 rounded border border-rose-500/30">Your Choice</span>
+                            </div>
+                        {% else %}
+                            <!-- Other Muted Option -->
+                            <div class="flex items-center p-5 rounded-2xl border border-white/[0.02] bg-white/[0.003] opacity-40 transition-all duration-300">
+                                <div class="w-5 h-5 rounded-full border border-slate-700 mr-4 flex items-center justify-center"></div>
+                                <span class="font-medium text-slate-400">{{ question.option_c }}</span>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Standard Selection Mode -->
+                        <div class="flex items-center p-5 rounded-2xl border border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-slate-600 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/[0.05] peer-checked:ring-2 peer-checked:ring-indigo-500/20 peer-checked:[&_.radio-circle]:border-indigo-500 peer-checked:[&_.radio-circle]:bg-indigo-500 peer-checked:[&_.radio-dot]:opacity-100 peer-checked:[&_.option-text]:text-white">
+                            <div class="radio-circle w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center mr-4 transition-all shrink-0">
+                                <div class="radio-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
+                            </div>
+                            <span class="option-text text-slate-300 font-medium transition-colors">{{ question.option_c }}</span>
+                        </div>
+                    {% endif %}
+                </label>
+
+                <!-- Option D -->
+                <label class="cursor-pointer block">
+                    <input type="radio" name="option" value="option_d" class="peer sr-only" 
+                           {% if show_feedback %}disabled{% endif %} 
+                           {% if selected_option == 'option_d' %}checked{% endif %}>
+                    
+                    {% if show_feedback %}
+                        <!-- Feedback Mode -->
+                        {% if correct_option_key == 'option_d' %}
+                            <!-- Correct Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-emerald-500/50 bg-emerald-500/10 text-emerald-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_d }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 px-2.5 py-1 rounded border border-emerald-500/30">Correct</span>
+                            </div>
+                        {% elif selected_option == 'option_d' %}
+                            <!-- User Selected Incorrect Option -->
+                            <div class="flex items-center justify-between p-5 rounded-2xl border border-rose-500/50 bg-rose-500/10 text-rose-300 transition-all duration-300">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center mr-4 text-xs font-black">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <span class="font-medium">{{ question.option_d }}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest bg-rose-500/20 px-2.5 py-1 rounded border border-rose-500/30">Your Choice</span>
+                            </div>
+                        {% else %}
+                            <!-- Other Muted Option -->
+                            <div class="flex items-center p-5 rounded-2xl border border-white/[0.02] bg-white/[0.003] opacity-40 transition-all duration-300">
+                                <div class="w-5 h-5 rounded-full border border-slate-700 mr-4 flex items-center justify-center"></div>
+                                <span class="font-medium text-slate-400">{{ question.option_d }}</span>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Standard Selection Mode -->
+                        <div class="flex items-center p-5 rounded-2xl border border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-slate-600 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/[0.05] peer-checked:ring-2 peer-checked:ring-indigo-500/20 peer-checked:[&_.radio-circle]:border-indigo-500 peer-checked:[&_.radio-circle]:bg-indigo-500 peer-checked:[&_.radio-dot]:opacity-100 peer-checked:[&_.option-text]:text-white">
+                            <div class="radio-circle w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center mr-4 transition-all shrink-0">
+                                <div class="radio-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
+                            </div>
+                            <span class="option-text text-slate-300 font-medium transition-colors">{{ question.option_d }}</span>
+                        </div>
+                    {% endif %}
+                </label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-6 border-t border-white/[0.06] flex justify-end">
+                {% if show_feedback %}
+                    <!-- Continue Action -->
+                    <input type="hidden" name="action" value="next">
+                    <button type="submit" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold tracking-wide shadow-lg shadow-indigo-500/25 transition-all duration-300 transform active:scale-95 cursor-pointer flex items-center gap-2 group">
+                        {% if current_number == total_questions %}
+                            Finish & View Results
+                        {% else %}
+                            Continue Quest
+                        {% endif %}
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                {% else %}
+                    <!-- Submit Action -->
+                    <input type="hidden" name="action" value="submit">
+                    <button type="submit" class="px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold tracking-wide transition-all duration-300 transform active:scale-95 cursor-pointer flex items-center gap-2 group">
+                        Submit Answer
+                        <i class="fa-solid fa-paper-plane group-hover:scale-110 transition-transform"></i>
+                    </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
