@@ -1,15 +1,16 @@
 from django.db import models
 
 # Create your models here.
-class Courses(models.Model):
+class Course(models.Model):
     name = models.CharField(max_length=25)
 
     def __str__(self):
         return self.name
 
 class Topic(models.Model):
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    
 
     def __str__(self):
         return f"{self.course.name} - {self.name}"
