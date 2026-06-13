@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6fe5be725dc24a7832fcdb72f1541324af3202ec15d2b7c537807d5f929250b4"
+            "sha256": "b3ff2dba96878178f3cd9a609e5f57bae64b328f1ef7b2b611089cb324f0f5be"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -41,6 +41,23 @@
             "index": "pypi",
             "markers": "python_version >= '3.11'",
             "version": "==4.4.2"
+        },
+        "gunicorn": {
+            "hashes": [
+                "sha256:40233d26a5f0d1872916188c276e21641155111c2853f0c2cd55260aec0d24fc",
+                "sha256:ca9346f85e3a4aeeb64d491045c16b9a35647abd37ea15efe53080eb8b090baf"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.10'",
+            "version": "==26.0.0"
+        },
+        "packaging": {
+            "hashes": [
+                "sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e",
+                "sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==26.2"
         },
         "pytailwindcss": {
             "hashes": [

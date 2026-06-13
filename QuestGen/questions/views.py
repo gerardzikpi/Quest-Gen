@@ -1,18 +1,52 @@
 import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView
 from django.contrib import messages
-from .models import Courses, Topic, Question
+from django.http import JsonResponse
+from .models import Course, Topic, Question
 
-class HomeView(ListView):
-    model = Courses
+from .forms import QuestSelectForm
+
+
+class HomeView(View):
     template_name = 'questions/home.html'
-    context_object_name = 'courses'
-    
-    def get_queryset(self):
-        # Prefetch topics and their corresponding questions to reduce database queries
-        return Courses.objects.prefetch_related('topic_set__question_set').all()
+    form_class = QuestSelectForm
+
+    def _base_context(self, form):
+        return {
+            'form': form,
+            'courses': Course.objects.prefetch_related('topic_set__question_set').all().order_by('name')
+        }
+
+    def get(self, request):
+        form = self.form_class()
+
+        return render(request, self.template_name, self._base_context(form))
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            topic = form.cleaned_data['topic']
+            return redirect('topic_detail', pk=topic.pk)
+        return render(request, self.template_name, self._base_context(form))
+
+
+class TopicsByCourseView(View):
+    """Returns a JSON list of topics belonging to a given course."""
+
+    def get(self, request, course_id):
+        course = get_object_or_404(Course, id=course_id)
+        topics = Topic.objects.filter(course=course)
+        data = [
+            {
+                'id': t.id,
+                'name': t.name,
+                'question_count': t.question_set.count(),
+            }
+            for t in topics
+        ]
+        return JsonResponse({'topics': data})
 
 class TopicDetailView(DetailView):
     model = Topic
