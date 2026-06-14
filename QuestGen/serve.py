@@ -1,9 +1,9 @@
 import sys
 import os
 from waitress import serve
-from QuestGen import wsgi
+from QuestGen import QuestGen
 
-application = wsgi.application
+application =QuestGen.wsgi.application
 
 def server():
     sys.path.append(os.path.abspath())
