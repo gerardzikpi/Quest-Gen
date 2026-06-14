@@ -6,9 +6,10 @@ name = "pypi"
 [packages]
 django = "*"
 django-tailwind = "*"
-gunicorn = "*"
-
-[dev-packages]
+waitress = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.14"
+
+[dev-packages]
