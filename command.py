@@ -1,4 +1,4 @@
-import QuestGen
 from QuestGen.serve import server
 
-server()
+if __name__ == '__main__':
+    server()

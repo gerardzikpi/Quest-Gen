@@ -1,13 +1,16 @@
-import sys
 import os
+import sys
 from waitress import serve
-from QuestGen import QuestGen
 
-application =QuestGen.wsgi.application
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+from QuestGen.QuestGen.wsgi import application
+
 
 def server():
-    sys.path.append(os.path.abspath())
     if __name__ == '__main__':
-        serve(application, host='[0.0.0.0]', port=8000)
+        serve(application, host='0.0.0.0', port=8000)
 
 server()
