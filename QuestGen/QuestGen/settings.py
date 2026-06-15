@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tailwind',
-    'QuestGen.questions',
-    'QuestGen.theme',
+    'questions',
+    'theme',
 ]
 
 MIDDLEWARE = [
