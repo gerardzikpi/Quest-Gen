@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tailwind',
     'QuestGen.questions',
-    'theme',
+    'QuestGen.theme',
 ]
 
 MIDDLEWARE = [
