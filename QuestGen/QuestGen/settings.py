@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-on3m1n)6+(klam($fprjq#w1&_ug$^f5pafd67*6=^&lvw795v
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "https://questgen.onrender.com",
+    "https://quest-gen.onrender.com",
      "localhost"
      ]
 
