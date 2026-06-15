@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-on3m1n)6+(klam($fprjq#w1&_ug$^f5pafd67*6=^&lvw795v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "https://questgen.onrender.com",
+     "localhost"
+     ]
 
 
 # Application definition
@@ -38,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tailwind',
-    'QuestGen.questions',
-    'QuestGen.theme',
+    'questions',
+    'theme',
 ]
 
 MIDDLEWARE = [
